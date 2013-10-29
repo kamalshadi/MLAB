@@ -1,0 +1,22 @@
+SELECT web100_log_entry.connection_spec.remote_ip as ip,web100_log_entry.log_time as lt,
+(web100_log_entry.snap.SndLimTimeRwin +
+web100_log_entry.snap.SndLimTimeCwnd +
+web100_log_entry.snap.SndLimTimeSnd) as tt,
+web100_log_entry.snap.SampleRTT as rtt,
+web100_log_entry.snap.HCThruOctetsAcked as bytes,
+web100_log_entry.snap.CurCwnd as cwnd,
+web100_log_entry.snap.CurRTO as rt0,
+web100_log_entry.snap.CurSsthresh as sth,
+web100_log_entry.snap.OctetsRetrans as retran,
+web100_log_entry.snap.Timeouts as timeout,
+web100_log_entry.snap.CongSignals as cong,
+web100_log_entry.snap.SlowStart as ss,
+web100_log_entry.snap.CongAvoid as ca,
+web100_log_entry.connection_spec.local_ip as server
+from
+TABLE
+WHERE
+IS_EXPLICITLY_DEFINED(project)
+AND project = 0
+AND 
+(COND)
