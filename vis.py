@@ -56,7 +56,7 @@ if __name__ == '__main__':
 		val=csv.reader(f,delimiter=',',quotechar='"', quoting=csv.QUOTE_MINIMAL)
 		for i,line in enumerate(val):
 			if i==0:
-				print line
+				l=len(line)
 				i=1
 				continue
 			else:
@@ -67,18 +67,38 @@ if __name__ == '__main__':
 				rtt=[float(xx) for xx in line[3].strip('"').split(',')]
 				cwnd=[float(xx) for xx in line[4].strip('"').split(',')]
 				loss=[float(xx) for xx in line[5].strip('"').split(',')]
-				acked=[float(xx) for xx in line[6].strip('"').split(',')]
-				t,w=order(t,zip(rtt,cwnd,loss,acked))
-				rtt,cwnd,loss,acked=[list(xx) for xx in zip(*w)]
+				ss=[float(xx) for xx in line[6].strip('"').split(',')]
+				ca=[float(xx) for xx in line[7].strip('"').split(',')]
+				cs=[float(xx) for xx in line[8].strip('"').split(',')]
+				th=[float(xx) for xx in line[9].strip('"').split(',')]
+				down=float(line[l-2])/(1e6*max(t))
+				t,w=order(t,zip(rtt,cwnd,loss,ss,ca,cs,th))
+				rtt,cwnd,loss,ss,ca,cs,th=[list(xx) for xx in zip(*w)]
 				fig=pl.figure()
-				ax=pl.subplot(221)
+				ax=pl.subplot(421)
 				ax.plot(t,rtt)
-				ax=pl.subplot(222)
+				pl.ylabel('RTT')
+				ax=pl.subplot(422)
 				ax.plot(t,cwnd)
-				ax=pl.subplot(223)
+				pl.ylabel('cwnd')
+				ax=pl.subplot(423)
 				ax.plot(t,loss)
-				ax=pl.subplot(224)
-				ax.plot(t,acked)
+				pl.ylabel('loss')
+				ax=pl.subplot(424)
+				ax.plot(t,ss)
+				pl.ylabel('SlowStart')
+				ax=pl.subplot(425)
+				ax.plot(t,ca)
+				pl.ylabel('congAvoid')
+				ax=pl.subplot(426)
+				ax.plot(t,cs)
+				pl.ylabel('congSignals')
+				ax=pl.subplot(427)
+				ax.plot(t,th)
+				pl.ylabel('slow Threshold')
+				pl.xlim(3,12)
+				pl.ylim(min(th[1000:]),max(th[1000:]))
+				pl.suptitle('Throughput: '+str(down))
 				pl.show()
 				
 				
