@@ -1,10 +1,9 @@
-select cIP,logTime,elapsed_time,RTT,CWND,bytes_loss,SlowStart,CongAvoid,CongSignals,SlowThreshold,transfered,sIP
+select cIP,logTime,elapsed_time,RTT,CWND,CongSignals,octetsOut,loss,acked,sIP
 from
 (
 select test_id,max(lt) as logTime ,max(ip) as cIP,group_concat(string(tt)) as elapsed_time,group_concat(string(rtt1)) as RTT,group_concat(string(cwnd1)) as CWND,
-group_concat(string(retran)) as bytes_loss,max(bytes) as transfered,
-group_concat(string(ss)) as SlowStart,group_concat(string(ca)) as CongAvoid,
-group_concat(string(cs)) as CongSignals,group_concat(string(sthe)) as SlowThreshold,
+group_concat(string(cs)) as CongSignals,
+max(retran) as loss,max(bytes) as acked,max(bytes_out) as octetsOut,
 max(server) as sIP
 from
 (
@@ -17,10 +16,8 @@ web100_log_entry.snap.HCThruOctetsAcked as bytes,
 web100_log_entry.snap.CurCwnd as cwnd1,
 web100_log_entry.snap.OctetsRetrans as retran,
 web100_log_entry.connection_spec.local_ip as server,
-web100_log_entry.snap.SlowStart as ss,
-web100_log_entry.snap.CongAvoid as ca,
 web100_log_entry.snap.CongSignals as cs,
-web100_log_entry.snap.CurSsthresh as sthe,
+web100_log_entry.snap.HCDataOctetsOut as bytes_out,
 test_id
 from
 TABLE

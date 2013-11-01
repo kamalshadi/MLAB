@@ -66,39 +66,31 @@ if __name__ == '__main__':
 				t=[float(xx)/1e6 for xx in line[2].strip('"').split(',')]
 				rtt=[float(xx) for xx in line[3].strip('"').split(',')]
 				cwnd=[float(xx) for xx in line[4].strip('"').split(',')]
-				loss=[float(xx) for xx in line[5].strip('"').split(',')]
-				ss=[float(xx) for xx in line[6].strip('"').split(',')]
-				ca=[float(xx) for xx in line[7].strip('"').split(',')]
-				cs=[float(xx) for xx in line[8].strip('"').split(',')]
-				th=[float(xx) for xx in line[9].strip('"').split(',')]
-				down=float(line[l-2])/(1e6*max(t))
-				t,w=order(t,zip(rtt,cwnd,loss,ss,ca,cs,th))
-				rtt,cwnd,loss,ss,ca,cs,th=[list(xx) for xx in zip(*w)]
+				congS=[float(xx) for xx in line[5].strip('"').split(',')]
+				octsOut=int(line[6])
+				octsR=int(line[7])
+				acked=int(line[8])
+				pr=str(100*float(octsR)/float(octsOut))
+				pa=str(100*float(acked)/float(octsOut))
+				down=float(acked)/(1e6*max(t))
+				t,w=order(t,zip(rtt,cwnd,congS))
+				rtt,cwnd,congS=[list(xx) for xx in zip(*w)]
 				fig=pl.figure()
-				ax=pl.subplot(421)
+				ax=pl.subplot(221)
 				ax.plot(t,rtt)
 				pl.ylabel('RTT')
-				ax=pl.subplot(422)
+				ax=pl.subplot(222)
 				ax.plot(t,cwnd)
 				pl.ylabel('cwnd')
-				ax=pl.subplot(423)
-				ax.plot(t,loss)
-				pl.ylabel('loss')
-				ax=pl.subplot(424)
-				ax.plot(t,ss)
-				pl.ylabel('SlowStart')
-				ax=pl.subplot(425)
-				ax.plot(t,ca)
-				pl.ylabel('congAvoid')
-				ax=pl.subplot(426)
-				ax.plot(t,cs)
-				pl.ylabel('congSignals')
-				ax=pl.subplot(427)
-				ax.plot(t,th)
-				pl.ylabel('slow Threshold')
-				pl.xlim(3,12)
-				pl.ylim(min(th[1000:]),max(th[1000:]))
-				pl.suptitle('Throughput: '+str(down))
+				ax=pl.subplot(223)
+				ax.plot(t,congS)
+				pl.ylabel('Congestion Signal')
+				ax=pl.subplot(224)
+				pl.xlim(0,1)
+				pl.ylim(0,1)
+				pl.text(.1,.8,'Throughput: \n'+str(down))
+				pl.text(.1,.5,'Percentage Retransmited:\n '+pr)
+				pl.text(.1,.2,'Percentage Acked: \n'+pa)
 				pl.show()
 				
 				

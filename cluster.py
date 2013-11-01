@@ -9,7 +9,10 @@ import subprocess
 import statvfs
 
 def usage():
-    return '\nSummary:\n./graph -e 0.2 -f <filename> -p True/False\nForming the similarity graph and saving it to .G format in graphml\n'
+    return """
+    Summary:
+    Reading undirected weighted similarity graph and do the walktrap clustering plus subnet mapping
+			"""
 
 
 def parse_args():
@@ -23,7 +26,7 @@ def parse_args():
         sys.exit(1)
     options, args = parser.parse_args()
     if options.fName is None:
-        print 'Error: Please provide --filename to read data \n         (do not include .G suffix)'
+        print 'Error: Please provide --filename to read data \n (do not include .G suffix)'
         sys.exit(1)
     return (options, args)
 

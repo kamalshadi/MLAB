@@ -7,8 +7,21 @@ import subprocess
 import statvfs
 
 def usage():
-    return '\nSummary:\nUsing bq.py you could download NDT data used for Community detection and clustering\nThe data will be saved in csv file in format:\ntest_id, minRTT, DownloadRate, City, Region, country ,Server\nNote that geolocation if not queried by user explicitly are not included.\nyou could filter tha data by prefix -p and location -k -r -c\n-p prefix in form 0.0.0.0/x\n-k Countries of origion\n-r regions of origin (State)\n-c cities of origin \n-s Servers running test (add /x to the end of server name considering its subnet)\n-t unix start and end time (required)\nExample :\n./bq.py -t 2013_09 -p 98.112.0.0/16,98.113.0.0/17 -c United States -r CA,NY -t 2013_09 \n./bq.py -t 2013_09,2013_10 -p 98.0.0.0/13 -k ? -r  ? -c ? (to have field of geolocation)\n'
-
+    return """
+    Summary:Using bq.py you could download NDT data used for Community detection and clustering
+    The data will be saved in csv file in format:
+    test_id, minRTT, DownloadRate, City, Region, country ,Server
+    Note that geolocation if not queried by user explicitly are not included.
+    you could filter tha data by prefix -p and location -k -r -c
+    -p prefix in form 0.0.0.0/x
+    -k Countries of origion
+    -r regions of origin (State)
+    -c cities of origin
+    -s Servers running test (add /x to the end of server name considering its subnet)
+    -t unix start and end time (required)\nExample :
+    ./bq.py -t 2013_09 -p 98.112.0.0/16,98.113.0.0/17 -k United States -r CA,NY -t 2013_09 
+    ./bq.py -t 2013_09,2013_10 -p 98.0.0.0/13 -k ? -r  ? -c ? (to have field of geolocation)
+			"""
 
 def parse_args():
     from optparse import OptionParser
@@ -127,6 +140,7 @@ if __name__ == '__main__':
         cond = ' AND \n' + ' AND \n'.join(where)
         qstr = qstr.replace('COND', cond)
         f = open('CSV/' + fName, 'w')
+        print qstr.strip()
         qq = "bq -q --format=csv query --max_rows 100000 '" + qstr.strip() + ";' > CSV/" + fName
         print 'File generated: ' + fName
         r = os.system(qq)
