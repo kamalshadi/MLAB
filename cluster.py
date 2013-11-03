@@ -42,8 +42,8 @@ if __name__ == '__main__':
     qq = 'WalkTrap/walktrap CSV/' + fName + ".walktrap -b -d1 -s |grep community| cut -d'=' -f2 > CSV/" + fName + '.C'
     os.system(qq)
     if plot:
-        communityGraph(fName, plot)
+        communityGraph(fName)
     C = UoSM_input(fName)
-    uos = cluster2sub(C, g)
+    uos = cluster2sub(C,g)
     with open('CSV/' + fName + '.uos', 'w') as f:
         f.write(str(uos))

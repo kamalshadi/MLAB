@@ -1,3 +1,4 @@
+*test*
 *.pyc
 CSV/
 Dump/
@@ -7,3 +8,7 @@ Tests/
 WalkTrap/
 test
 home/
+*.G
+*.walktrap
+*.A
+*.uos

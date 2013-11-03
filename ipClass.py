@@ -1,6 +1,6 @@
 import ipaddress as ix
 from subnet import *
-class IPclass:
+class ipClass:
 	def __init__(self,ip):
 		self.ip = ix.ip_address(unicode(ip))
 	def bin(self):

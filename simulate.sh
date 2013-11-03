@@ -321,8 +321,8 @@ eval $s
 echo "geolocating clients"
 s="./geoUoS.py -f $fName"
 eval $s
-echo "Ploting Geolocations"
-s="./geoPlot.py -f $fName"
-eval $s
+#echo "Ploting Geolocations"
+#s="./geoPlot.py -f $fName"
+#eval $s
 fi
 

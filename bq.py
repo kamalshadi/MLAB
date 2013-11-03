@@ -140,7 +140,6 @@ if __name__ == '__main__':
         cond = ' AND \n' + ' AND \n'.join(where)
         qstr = qstr.replace('COND', cond)
         f = open('CSV/' + fName, 'w')
-        print qstr.strip()
         qq = "bq -q --format=csv query --max_rows 100000 '" + qstr.strip() + ";' > CSV/" + fName
-        print 'File generated: ' + fName
         r = os.system(qq)
+        print 'File generated: ' + fName
