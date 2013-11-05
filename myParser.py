@@ -3,7 +3,7 @@ import re
 from ipClass import *
 from myBasic import *
 import networkx as nx
-from graphvisu import *
+from graphvisu import myDraw
 import numpy as num
 import math
 
@@ -174,24 +174,36 @@ def csv2gml(fName,eps=.3):
 	minRTT=[0]*len(p)
 	sim={}
 	E=[]
+	axial={}
 	for i,xx in enumerate(p):
-		w = test_id_2_ip(xx[0])
-		if w is None: 
-			continue
-		lIP[i] = w
+		lIP[i] = xx[0].strip()
 		try:
-			lS[i] = ipClass(xx[-1]).sub('/24').string()
+			lS[i] = ipClass(xx[-1]).sub('/24').string().strip()
 			minRTT[i] = float(xx[1])
 		except ValueError:
 			continue
+		try:
+			axial[(lS[i],lIP[i])]=axial[(lS[i],lIP[i])]+1
+		except KeyError:
+			axial[(lS[i],lIP[i])]=1
+	ll=len(axial)
+	to_del=[]
+	for i in range(ll):
+		if axial[(lS[i],lIP[i])]<2:
+			to_del.append(i)
+	lS=del_indices(lS,to_del)
+	lIP=del_indices(lIP,to_del)
+	minRTT=del_indices(minRTT,to_del)
 	myDic=list2dic(lS,zip(lIP,minRTT))
 	ll=len(myDic)
 	print 'Number of servers : '+ str(ll)
+	if ll<2:
+		return 0
 	for i,w in enumerate(myDic.keys()):
 		occur={}
 		l=len(myDic[w])
 		print '\n loop '+str(i+1)+' of '+str(ll)+' :'
-		print l*(l-1)/2
+		print '          '+str(l)+' clients -> '+str(l*(l-1)/2)+' loops'
 		v=[ww[1] for ww in myDic[w]]
 		sigma=num.std(v)
 		if sigma < 1:
@@ -199,6 +211,8 @@ def csv2gml(fName,eps=.3):
 		for comb in combinations(myDic[w],2):
 			a=comb[0][0]
 			b=comb[1][0]
+			if a==b:
+				continue
 			delta=abs(comb[0][1]-comb[1][1])
 			link=(a,b)
 			if link in occur.keys():
@@ -218,12 +232,18 @@ def csv2gml(fName,eps=.3):
 		weight=combSum(sim[w])
 		if weight > eps:
 			G.add_edge(w[0],w[1],weight=weight)
+	G=score(G,1)  # Added robustness
+	if not nx.is_connected(G):
+		print "Graph is not connected, Largest component is used\n"
+		G=nx.connected_component_subgraphs(G)[0]
 	nx.write_graphml(G,"CSV/"+fName+'.G')
+	myDraw(G,'PIC/Raw_'+fName+'.png')
+	return G.size()
 	
 def walktrapFile(fName):
 	#Writing the graph edge as needed by walktrap
 	G=nx.read_graphml("CSV/"+fName+'.G')
-	a=G.nodes()
+	a=sorted(G.nodes())
 	b=range(len(a))
 	myDic=list2dic(a,b)
 	f=open("CSV/"+fName+'.walktrap','w')
@@ -239,26 +259,27 @@ def communityGraph(fName):
 	#for the name of the graph add .G
 	# for the name of communities add .C
 	G=nx.read_graphml("CSV/"+fName+'.G')
-	a=G.nodes()
-	print a
-	print ':::::'
+	a=sorted(G.nodes())
 	b=[str(xx) for xx in range(len(a))]
 	myDic=list2dic(b,a)
+	C=0
 	with open('CSV/'+fName+'.C','r') as f:
-		for line in f:
+		for k,line in enumerate(f):
+			C=C+1
 			t1=line.strip(' {}\t\n')
 			t2=t1.split(',')
-			cc = randColor()
+			cc = pickColor(k).strip()
 			for w in t2:
 				n=myDic[w.strip()]
-				G.node[n[0]]['color'] = cc
-	return G
+				G.node[n[0].strip()]['color'] = cc
+	print "Number of communities: "+str(C)
+	myDraw(G,"PIC/C_"+fName+".png")
 	
 def UoSM_input(fName):
 	#for the name of the graph add .G
 	#for the name of communities add .C
-	G=nx.read_graphml(fName+'.G')
-	a=G.nodes()
+	G=nx.read_graphml("CSV/"+fName+'.G')
+	a=sorted(G.nodes())
 	b=[str(xx) for xx in range(len(a))]
 	myDic=list2dic(b,a)
 	C=[]
@@ -272,4 +293,28 @@ def UoSM_input(fName):
 	return C
 	
 	
+def score(G,e):
+	fg=True
+	while fg:
+		G=del_noises(G,e)
+		if G=={}:
+			return None
+		elif min(G.degree(G.nodes(),'weight').values()) >= e :
+			return G
+		else:
+			pass
+			
+def del_noises(G,e):
+	nl=G.nodes()
+	nw=G.degree(nl,'weight').values()
+	nw,nl=order(nw,nl)
+	l=range(len(nw))
+	for j in l:
+		if nw[j]<e:
+			G.remove_node(nl[j])
+		else:
+			return G
+	return G
 	
+			
+		

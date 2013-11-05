@@ -118,6 +118,19 @@ def randColor():
 	x = random.randint(0, 16777215)
 	s= "#%x" % x
 	return s
+
+def pickColor(m):
+	n=int(m)
+	c=["#ffffcc","#ff5400","#a7bf42","#ffff00",
+	"#9937d2","#feb8c6","#780909","#cde312",
+	"#19bac1","#fbfbfb","#195839","#514fad",
+	"#0f0e1c","#9e143f","#0bf01c","#779679",
+	"#0f1e11","#0e103f","#00001c","#779fff",
+	"#f44f00","#b2b200","#0f0f10","#1b2100"]
+	if n>len(c):
+		print "Color index exceeded. 'blue' was returned as default"
+		return '#0000ff'
+	return c[n]
 	
 def header2id(fName,key):
 	#add id to each line showing the number of headers starting with key
@@ -144,10 +157,3 @@ def header2id(fName,key):
 	for w in dic.keys():
 		p=p+w+','+str(dic[w])+'\n'
 	return p
-				
-					
-	
-	
-	
-			
-			

@@ -257,6 +257,7 @@ def IPaxVis(b,c,y=1,anot=True):
 	#~ pl.show()
 	
 def bracketIP(V,b,g='/24'):
+	# Boundry IPs must be revisited e.g. 255.255.255.xxx and 0.0.0.xxx
 	# V is value list (IP string) and 'b' is cluster labels
 	# output is a list of list and a list of clusters
 	# g is maximum gap allowed in subnet
@@ -360,8 +361,8 @@ def cluster2sub(C,g_in='/24',g_out=None):
 	labels1=[[str(i)]*len(w) for i,w in enumerate(C)]
 	labels=flatten(labels1)
 	V=flatten(C)
-	N1,pN = commonPrefix(V)
-	N=subnet(N1)
+	N1,pN = commonPrefix(V) #tentative
+	N=subnet(N1) #tentative
 	br,lb=bracketIP(V,labels,g_in)
 	br=growSub(br,g_out)
 	sub1=['0']*len(br)
@@ -372,11 +373,11 @@ def cluster2sub(C,g_in='/24',g_out=None):
 		a1=abr.prev(g_out)
 		b1=bbr.next(g_out)
 		if i==0:
-			a_p = ipClass(N.first()).prev('/32')
+			a_p = ipClass(N.first()).prev('/32') #tentative
 		else :
 			a_p = br[i-1][1]
 		if i==len(br)-1:
-			b_n = ipClass(N.last()).next('/32')
+			b_n = ipClass(N.last()).next('/32') #tentative
 		else:
 			b_n = br[i+1][0]
 		if ((a1 is not None) and (a_p is not None)):
@@ -403,6 +404,7 @@ def cluster2sub(C,g_in='/24',g_out=None):
 			b=None
 		sub1[i]=bracket2sub(w,a,b,g_out)
 	dic=list2dic(lb,sub1)
+	fl=['0']*len(dic.keys())
 	for i,w in enumerate(dic.keys()):
 		temp1=list(dic[w])
 		to_del=[]
@@ -411,6 +413,8 @@ def cluster2sub(C,g_in='/24',g_out=None):
 				to_del.append(j)
 		temp1=del_indices(temp1,to_del)
 		sub[i]=' U '.join(temp1)
+		fl[i]=w
+	fl,sub=order(fl,sub)
 	return sub
 	
 def bracket2sub(bracket,a1,b1,g):

@@ -36,9 +36,7 @@ if __name__ == '__main__':
     fName = options.fName
     g = options.g
     plot = options.plot
-    z = walktrapFile(fName)
-    if z == 0:
-        exit
+    walktrapFile(fName)
     qq = 'WalkTrap/walktrap CSV/' + fName + ".walktrap -b -d1 -s |grep community| cut -d'=' -f2 > CSV/" + fName + '.C'
     os.system(qq)
     if plot:

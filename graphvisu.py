@@ -9,7 +9,11 @@ def order(v,w):
 	w=list(l[1])
 	return [v,w]
 	
-def myDraw(G,labels=None):
+def myDraw(G,fName,labels=None):
+	#It will draw a graph considering following parameters
+	# weight for edge
+	# label/color/size for nodes
+	# Note all these parameters are optional
 	dS=600
 	dC='blue'
 	Ew=3
@@ -18,7 +22,6 @@ def myDraw(G,labels=None):
 			G.node[w[0]]['color']=dC
 		if 'size' not in w[1].keys():
 			G.node[w[0]]['size']=dS
-	print labels
 	pos=nx.spring_layout(G)
 	N=nx.get_node_attributes(G,'color')
 	nC=N.values()
@@ -31,8 +34,8 @@ def myDraw(G,labels=None):
 	nx.draw_networkx_nodes(G, pos,nodelist=z,node_size=nS,node_color=nC)
 	if labels:
 		t=G.nodes(True)
-		a1=[w[0] for w in t if labels in w[1].keys()]
-		a2=[w[1][labels] for w in t if labels in w[1].keys()]
+		a1=[w[0] for w in t ]
+		a2=[w[1][labels] if labels in w[1].keys() else w[0] for w in t]
 		nx.draw_networkx_labels(G,pos, dict(zip(a1,a2)))
 	elist=[]
 	ew=[]
@@ -44,41 +47,6 @@ def myDraw(G,labels=None):
 			ew.append(G[w[0]][w[1]]['weight'])
 			
 	nx.draw_networkx_edges(G, pos, edgelist=elist, width=ew)
-	pl.show()
-	#~ nx.draw_networkx_nodes(G, pos,nodelist=nC.keys(),node_label=nC.values())
-	#namespace node: 'color','size'
-	#namespace edge: 'width'
-
-
-
-
-def s_core(G,s,weight='weight'):
-	# label is the property of edges to be considered as weights
-	if any(G.nodes()):
-		pass
-	else:
-		print 'Warning:Graph is empty. None returned.'
-		return None
-	V=G.nodes()
-	D=[G.degree(xx,weight) for xx in V]
-	D,V=order(D,V)
-	while G!={}:
-		for i,d in enumerate(D):
-			if d>s:
-				break
-		if i!=0:
-			G.remove_nodes_from(V[:i])
-		else:
-			print 'Go'
-			return G
-		V=G.nodes()
-		D=[G.degree(xx,weight) for xx in V]
-		D,V=order(D,V)
-	return G
-	
-def blackHole(G):
-	N=G.nodes()
-		
-	
+	pl.savefig(fName)
 	
 	

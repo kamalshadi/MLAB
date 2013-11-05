@@ -31,8 +31,9 @@ class subnet:
 			return [None,None]
 	def last(self):
 		p,l=self.prefix()
+		pp=p[0:l]+'1'*(32-l)
 		if l<31 and l!=32:
-			return str(ix.ip_address(int(list(self.sub.hosts())[-1])+1))
+			return str(ix.ip_address(int(pp,2)))
 		elif l==31:
 			return str(ix.ip_address(int(list(self.sub.hosts())[-1])))
 		else:
@@ -40,7 +41,7 @@ class subnet:
 	def first(self):
 		p,l=self.prefix()
 		if l<31 and l!=32:
-			return str(ix.ip_address(int(list(self.sub.hosts())[0])-1))
+			return str(ix.ip_address(int(p,2)))
 		elif l==31:
 			return str(ix.ip_address(int(list(self.sub.hosts())[0])))
 		else:

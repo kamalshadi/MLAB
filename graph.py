@@ -42,5 +42,7 @@ def parse_args():
 if __name__ == '__main__':
 	(options, args) = parse_args()
 	fName=options.fName
-	csv2gml(fName)
+	code=csv2gml(fName)
+	if code  < 1 :
+		sys.exit(11)
 	
