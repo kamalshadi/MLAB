@@ -52,6 +52,7 @@ if __name__ == '__main__':
 	uos=options.uos
 	ad="Dump/D-"+dirc+"/uos_"+uos
 	i=0
+	dic={}
 	with open(ad,'r') as f:
 		val=csv.reader(f,delimiter=',',quotechar='"', quoting=csv.QUOTE_MINIMAL)
 		for i,line in enumerate(val):
@@ -75,23 +76,37 @@ if __name__ == '__main__':
 				down=float(acked)/(1e6*max(t))
 				t,w=order(t,zip(rtt,cwnd,congS))
 				rtt,cwnd,congS=[list(xx) for xx in zip(*w)]
-				fig=pl.figure()
-				ax=pl.subplot(221)
-				ax.plot(t,rtt)
-				pl.ylabel('RTT')
-				ax=pl.subplot(222)
-				ax.plot(t,cwnd)
-				pl.ylabel('cwnd')
-				ax=pl.subplot(223)
-				ax.plot(t,congS)
-				pl.ylabel('Congestion Signal')
-				ax=pl.subplot(224)
-				pl.xlim(0,1)
-				pl.ylim(0,1)
-				pl.text(.1,.8,'Throughput: \n'+str(down))
-				pl.text(.1,.5,'Percentage Retransmited:\n '+pr)
-				pl.text(.1,.2,'Percentage Acked: \n'+pa)
-				pl.show()
+				try:
+					dic[cIP].append([t,rtt,cwnd,congS,down,pr,pa])
+				except KeyError:
+					dic[cIP]=[[t,rtt,cwnd,congS,down,pr,pa]]
+	for w in dic.keys():
+		for test in dic[w]:
+			t=test[0]
+			rtt=test[1]
+			cwnd=test[2]
+			congS=test[3]
+			down=test[4]
+			pr=test[5]
+			pa=test[6]
+			fig=pl.figure()
+			ax=pl.subplot(221)
+			ax.plot(t,rtt)
+			pl.ylabel('RTT')
+			ax=pl.subplot(222)
+			ax.plot(t,cwnd)
+			pl.ylabel('cwnd')
+			ax=pl.subplot(223)
+			ax.plot(t,congS)
+			pl.ylabel('Congestion Signal')
+			ax=pl.subplot(224)
+			pl.xlim(0,1)
+			pl.ylim(0,1)
+			pl.text(.1,.8,'Throughput: \n'+str(down))
+			pl.text(.1,.5,'Percentage Retransmited:\n '+pr)
+			pl.text(.1,.2,'Percentage Acked: \n'+pa)
+			pl.suptitle(w)
+			pl.show()
 				
 				
 				

@@ -7,7 +7,6 @@ from preprocess import *
 import scipy.stats
 from sklearn import mixture
 
-
 def CDF(a):
 	nBins=100
 	pdf,bins=num.histogram(a,nBins,density=True)

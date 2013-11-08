@@ -66,6 +66,8 @@ if __name__ == '__main__':
 	logt=[]
 	dt=[]
 	cc=[]
+	cl={}
+	tl={}
 	with open(ad,'r') as f:
 		val=csv.reader(f,delimiter=',',quotechar='"', quoting=csv.QUOTE_MINIMAL)
 		for i,line in enumerate(val):
@@ -74,24 +76,45 @@ if __name__ == '__main__':
 				i=1
 				continue
 			else:
-				cIP=line[0]
+				cIP=line[0].strip()
 				cc.append(cIP)
 				server=line[-1]
 				log=line[1]
 				logt.append(int(log))
 				t=[float(xx) for xx in line[2].strip('"').split(',')]
 				down=float(line[l-2])/max(t)
+				try:
+					cl[cIP]=cl[cIP]+[down]
+					tl[cIP]=tl[cIP]+[int(log)]
+				except KeyError:
+					cl[cIP]=[down]
+					tl[cIP]=[int(log)]
 				dt.append(down)
 				dic[(cIP,server,log)]={'throughput':down}
-				#~ 
 				ld.append(down)
 	print '\n\n\n'
 	print len(cc)
 	print len(set(cc))
 	print '\n\n\n'
-	print len(ld)
 	p,x=PDF(ld,50)
 	pl.plot(x,p)
+	pl.xlabel('Download Throughput')
+	pl.ylabel('PDF')
+	#~ pl.xlim(0,2)
 	pl.show()
-	pl.plot(*order(logt,dt))
+	cal=sorted(cl.keys())
+	for i in range(len(cal)):
+		pl.errorbar(i, num.mean(cl[cal[i]]), yerr=num.std(cl[cal[i]]), fmt='o',ecolor='g')
+		pl.text(i,num.mean(cl[cal[i]])+.1,str(len(cl[cal[i]])))
+	pl.xlabel('User')
+	pl.ylabel('Download Throughput')
 	pl.show()
+	cal=sorted(tl.keys())
+	for i in range(len(tl)):
+		pl.plot([i]*len(tl[cal[i]]), tl[cal[i]],'r*')
+		#~ pl.text(i,num.mean(cl[cal[i]])+.1,str(len(cl[cal[i]])))
+	pl.xlabel('User')
+	pl.ylabel('Time of test')
+	pl.show()
+	#~ pl.plot(*order(logt,dt))
+	#~ pl.show()
