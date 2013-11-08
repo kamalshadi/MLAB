@@ -232,10 +232,10 @@ def csv2gml(fName,eps=.3):
 		weight=combSum(sim[w])
 		if weight > eps:
 			G.add_edge(w[0],w[1],weight=weight)
-	if G.edges()==[]:
+	if G.size()==0 or G.order()==0:
 		return 0
-	G=score(G,1)  # Added robustness
-	if G.edges()==[]:
+	#~ G=score(G,1)  # Added robustness
+	if G.size()==0 or G.order()==0:
 		return 0
 	if not nx.is_connected(G):
 		print "Graph is not connected, Largest component is used\n"
@@ -301,8 +301,8 @@ def score(G,e):
 	fg=True
 	while fg:
 		G=del_noises(G,e)
-		if G=={}:
-			return None
+		if G.size()==0 or G.order()==0:
+			return G
 		elif min(G.degree(G.nodes(),'weight').values()) >= e :
 			return G
 		else:
