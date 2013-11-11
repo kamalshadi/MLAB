@@ -1,6 +1,7 @@
+import matplotlib
+matplotlib.use('Agg')
 import networkx as nx
 import pylab as pl
-#~ import matplotlib as pl
 
 def order(v,w):
 	a=zip(v,w)

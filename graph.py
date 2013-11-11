@@ -5,9 +5,7 @@ import os
 import sys
 import subprocess
 import statvfs
-#import pylab as pl
 from myParser import csv2gml
-from networkx import write_graphml
 
 def usage():
     return """

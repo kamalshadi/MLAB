@@ -234,7 +234,7 @@ def csv2gml(fName,eps=.3):
 			G.add_edge(w[0],w[1],weight=weight)
 	if G.size()==0 or G.order()==0:
 		return 0
-	#~ G=score(G,1)  # Added robustness
+	G=score(G,1)  # Added robustness
 	if G.size()==0 or G.order()==0:
 		return 0
 	if not nx.is_connected(G):

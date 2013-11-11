@@ -5,6 +5,8 @@ import os
 import sys
 import subprocess
 import statvfs
+import matplotlib
+matplotlib.use('Agg')
 
 def usage():
     return """

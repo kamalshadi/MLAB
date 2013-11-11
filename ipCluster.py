@@ -1,6 +1,5 @@
 import ipaddress as ix
 import numpy as num
-import pylab as pl
 from myBasic import *
 from random import randint
 import datetime
@@ -13,6 +12,9 @@ import csv
 from myParser import *
 from itertools import combinations
 import networkx as nx
+import matplotlib
+matplotlib.use('Agg')
+import pylab as pl
 
 
 def IPread(fName):
